@@ -37,7 +37,7 @@ template std::ofstream& operator<<(std::ofstream& _Os, const Student::oMode& _Mo
 template std::ostringstream& operator<<(std::ostringstream& _Os, const Student::oMode& _Mode);
 
 
-Student::Student() :_num(0), _name(""), _ave(0.f), _var(0.f) {
+Student::Student() :_num(0), _name(""), _sum(0.f), _ave(0.f), _var(0.f) { 
 	for (int i = 0; i < 3; ++i)
 		_score[i] = 0.f;
 }
@@ -55,6 +55,7 @@ Student::Student(numTy num, const char* name, std::initializer_list<float> score
 		_score[i++] = 0.f;
 	}
 
+	_sum = calc_sum();
 	_ave = calc_ave();
 	_var = calc_var();
 }
@@ -66,6 +67,7 @@ Student::Student(numTy num, const char* name, const float score[3])
 	for (int i = 0; i < 3; ++i)
 		_score[i] = score[i];
 
+	_sum = calc_sum();
 	_ave = calc_ave();
 	_var = calc_var();
 }
@@ -76,6 +78,7 @@ Student::Student(const Student& _Stu) : _num(_Stu._num) {
 	for (int i = 0; i < 3; ++i)
 		_score[i] = _Stu._score[i];
 
+	_sum = _Stu._sum;
 	_ave = _Stu._ave;
 	_var = _Stu._var;
 }
@@ -113,14 +116,16 @@ IstreamTy& operator>>(IstreamTy& _Is, Student& _Stu) {
 	_Is >> _Stu._score[2];
 
 	// less: "10170437, Mark J. Taylor, 83, 91.5, 87"
-	// more: "10170437, Mark J. Taylor, 83, 91.5, 87, 87.2, 12.1"
-	// also need to read ",ave,var"
+	// more: "10170437, Mark J. Taylor, 83, 91.5, 87, 261.5, 87.2, 12.1"
+	// also need to read ",sum,ave,var"
 	if (Student::_iMode == Student::iMode::more) {
+		_Is.ignore(1024, ',');	_Is >> _Stu._sum;
 		_Is.ignore(1024, ',');	_Is >> _Stu._ave;
 		_Is.ignore(1024, ',');	_Is >> _Stu._var;
 	}
 	else //if (Student::_iMode == Student::iMode::less)
 	{
+		_Stu._sum = _Stu.calc_sum();
 		_Stu._ave = _Stu.calc_ave();
 		_Stu._var = _Stu.calc_var();
 	}
@@ -150,8 +155,8 @@ template std::ifstream& operator>>(std::ifstream& _Ifs, Student& _Stu);
 
 
 void Student::print()const {
-	printf("%-10d%-20s\t%5.1f\t%5.1f\t%5.1f\t%5.1f\t%6.1f", _num, _name, \
-		_score[0], _score[1], _score[2], average(), variance());
+	printf("%-10d%-20s\t%5.1f\t%5.1f\t%5.1f\t%5.1f\t%5.1f\t%6.1f", _num, _name, \
+		_score[0], _score[1], _score[2], _sum, _ave, _var);
 }
 
 // primary template for output to file & string
@@ -161,7 +166,7 @@ OstreamTy& operator<<(OstreamTy& _Os, const Student& _Stu) {
 		<< ',' << _Stu._score[1] << ',' << _Stu._score[2];
 
 	if (Student::_oMode == Student::oMode::more) {
-		_Os << ',' << _Stu._ave << ',' << _Stu._var;
+		_Os << ',' << _Stu._sum << ',' << _Stu._ave << ',' << _Stu._var;
 	}
 
 	return _Os;
@@ -199,6 +204,9 @@ Student& Student::assign(const Student& _Stu) {
 	_name[_name_length - 1] = '\0';
 	for (int i = 0; i < 3; ++i)
 		_score[i] = _Stu._score[i];
+	_sum = _Stu._sum;
+	_ave = _Stu._ave;
+	_var = _Stu._var;
 	return *this;
 }
 
@@ -216,17 +224,20 @@ inline const char* Student::name()const { return _name; }
 inline float Student::math_score()const { return _score[0]; }
 inline float Student::english_score()const { return _score[1]; }
 inline float Student::computer_score()const { return _score[2]; }
-float Student::average()const { return _ave; }
-float Student::variance()const { return _var; }
+inline float Student::sum() { return _sum; }
+inline float Student::average()const { return _ave; }
+inline float Student::variance()const { return _var; }
+float Student::calc_sum()const { return _sum_(_score, 3); }
 float Student::calc_ave()const { return aver(_score, 3); }
 float Student::calc_var()const { return vari(_score, 3); }
 
-float Student::aver(const float a[], int n)const {
-	float ret = 0;
+float Student::_sum_(const float a[], int n)const {
+	float ret = 0.f;
 	for (int i = 0; i < n; ++i)
 		ret += a[i];
-	return ret / n;
+	return ret;
 }
+float Student::aver(const float a[], int n)const { return _sum_(a, n) / n; }
 float Student::vari(const float a[], int n)const {
 	float ret = 0;
 	float ave = aver(a, n);
@@ -237,10 +248,13 @@ float Student::vari(const float a[], int n)const {
 
 // modify attribute values, modify all to use @parse_assign(_csv_Line)
 inline void Student::modify_number(const numTy _Newnum) { _num = _Newnum; }
-inline void Student::modify_math(const float _Newmath) { _score[0] = _Newmath; _ave = calc_ave(); _var = calc_var(); }
-inline void Student::modify_english(const float _Newenglish) { _score[1] = _Newenglish; _ave = calc_ave(); _var = calc_var(); }
-inline void Student::modify_computer(const float _Newcomputer) { _score[2] = _Newcomputer; _ave = calc_ave(); _var = calc_var(); }
+inline void Student::modify_math(const float _Newmath) { _score[0] = _Newmath; _sum= calc_sum(); _ave = calc_ave(); _var = calc_var(); }
+inline void Student::modify_english(const float _Newenglish) { _score[1] = _Newenglish; _sum = calc_sum(); _ave = calc_ave(); _var = calc_var(); }
+inline void Student::modify_computer(const float _Newcomputer) { _score[2] = _Newcomputer; _sum = calc_sum(); _ave = calc_ave(); _var = calc_var(); }
 
+void Student::modify_name(const char* _Newname) {// strncpy(_name, _Newname, _name_length - 1); _name[_name_length-1]='\0';
+	strcpymost(_name, _Newname, _name_length);
+}
 void Student::strcpymost(char* _Destination, const char* _Source, size_t _Count) {
 	auto srcptr = _Source;
 	auto desptr = _Destination;
@@ -259,6 +273,3 @@ void Student::strcpymost(char* _Destination, const char* _Source, size_t _Count)
 	}
 }
 
-void Student::modify_name(const char* _Newname) {// strncpy(_name, _Newname, _name_length - 1); _name[_name_length-1]='\0';
-	strcpymost(_name, _Newname, _name_length);
-}

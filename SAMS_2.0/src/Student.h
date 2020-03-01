@@ -33,10 +33,13 @@ public:
 	float math_score()const;
 	float english_score()const;
 	float computer_score()const;
+	float sum();
 	float average()const;
 	float variance()const;
+	float calc_sum()const;
 	float calc_ave()const;
 	float calc_var()const;
+	float _sum_(const float a[], int n)const;
 	float aver(const float a[], int n)const;
 	float vari(const float a[], int n)const;
 
@@ -84,6 +87,7 @@ private:
 	numTy _num = { 0 };
 	char _name[_name_length] = { "" };
 	float _score[3] = { 0.0f,0.0f,0.0f };
+	float _sum = { 0.0f };
 	float _ave = { 0.0f };
 	float _var = { 0.0f };
 };
