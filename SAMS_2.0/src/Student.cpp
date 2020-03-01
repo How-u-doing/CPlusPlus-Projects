@@ -8,6 +8,9 @@
 Student::iMode Student::_iMode = Student::iMode::more;
 Student::oMode Student::_oMode = Student::oMode::more;
 
+Student::iMode& Student::get_iMode() { return _iMode; }
+Student::oMode& Student::get_oMode() { return _oMode; }
+
 void Student::set_iMode(const Student::iMode& _Mode) {
 	Student::_iMode = _Mode;
 }

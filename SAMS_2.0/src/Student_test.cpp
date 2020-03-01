@@ -33,6 +33,8 @@ void read(vector<Student>& list, const string& filename)
 		list.push_back(s);
 		cout << s << endl;
 	}
+
+	ifs.close();
 }
 
 void write(const vector<Student>& list, const string& filename)
@@ -44,7 +46,15 @@ void write(const vector<Student>& list, const string& filename)
 	}
 
 	ofs << "Student ID" << ',' << "Name" << ',' << "Math" << ',' << "English" \
-		<< ',' << "Computer" << ',' << "Average" << ',' << "Variance" << endl;
+		<< ',' << "Computer";
+
+	if (Student::get_oMode() == Student::oMode::more) {
+		ofs << ',' << "Average" << ',' << "Variance" << std::endl;
+	}
+	else {
+		ofs << '\n';
+	}
+
 
 	for (auto it = list.begin(); it != list.end(); ++it)
 		ofs << *it << endl;
@@ -80,7 +90,10 @@ int main()
 
 		vector<Student> list2;
 		printf("\n\n\nNumber\t  Name\t\t\t Math\tEnglish\tComputer Average Variance\n");
-		Student::set_iMode(Student::iMode::more);
+		//Student::set_iMode(Student::iMode::more);
+		ifstream ifs{ "new_data.csv" };
+		ifs >> Student::iMode::more;
+		
 		read(list2, "new_data.csv");
 	}
 	catch (exception& e) {

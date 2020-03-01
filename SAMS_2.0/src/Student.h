@@ -68,6 +68,10 @@ public:
 	static void set_iMode(const Student::iMode& _Mode);
 	static void set_oMode(const Student::oMode& _Mode);
 
+	/// add interfaces for getting ioMode state
+	static iMode& get_iMode();
+	static oMode& get_oMode();
+
 private:
 	void strcpymost(char* _Destination, const char* _Source, size_t _Count);
 	
