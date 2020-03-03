@@ -5,7 +5,7 @@
 #include <cstring>
 
 // definition of static data members
-Student::iMode Student::_iMode = Student::iMode::more;
+Student::iMode Student::_iMode = Student::iMode::less;
 Student::oMode Student::_oMode = Student::oMode::more;
 
 Student::iMode& Student::get_iMode() { return _iMode; }
@@ -218,19 +218,11 @@ Student& Student::operator=(const std::string& _csv_Line) {
 	return parse_assign(_csv_Line);
 }
 
-// get attribute values
-Student::numTy Student::number()const { return _num; }
-inline const char* Student::name()const { return _name; }
-inline float Student::math_score()const { return _score[0]; }
-inline float Student::english_score()const { return _score[1]; }
-inline float Student::computer_score()const { return _score[2]; }
-inline float Student::sum() { return _sum; }
-inline float Student::average()const { return _ave; }
-inline float Student::variance()const { return _var; }
 float Student::calc_sum()const { return _sum_(_score, 3); }
 float Student::calc_ave()const { return aver(_score, 3); }
 float Student::calc_var()const { return vari(_score, 3); }
 
+/// auxiliary funtions
 float Student::_sum_(const float a[], int n)const {
 	float ret = 0.f;
 	for (int i = 0; i < n; ++i)

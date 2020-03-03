@@ -18,7 +18,7 @@ void List::print_list() {
 }
 
 // return end() if not found
-List::iterator& List::search(Student::numTy _Stu_id) {
+List::iterator List::search(Student::numTy _Stu_id) {
 	auto it = begin();
 	for (; it != end(); ++it)
 		if (it->number() == _Stu_id) {
@@ -26,7 +26,7 @@ List::iterator& List::search(Student::numTy _Stu_id) {
 		}
 	return it;
 }
-List::iterator& List::search(const_iterator& _Where) {
+List::iterator List::search(const_iterator& _Where) {
 	auto it = begin();
 	for (; it != end(); ++it) {
 		if (it == _Where) {
@@ -65,27 +65,36 @@ void List::modify(const_iterator& _Where, const Student& _Newdata) {
 }
 
 
-void List::sort(sortMode _Mode , sortOrder _Order) {
-	switch (_Mode)
-	{
-	case List::sortMode::stu_id:
-		break;
-	case List::sortMode::sum:
-		break;
-	case List::sortMode::ave:
-		break;
-	case List::sortMode::math:
-		break;
-	case List::sortMode::english:
-		break;
-	case List::sortMode::computer:
-		break;
-	case List::sortMode::var:
-		break;
-	default:
-		break;
-	}
-
+void List::sort(sortMode _Mode, sortOrder _Order) {
+	std::sort(begin(), end(), [&_Mode, &_Order](const Student& a, const Student& b) {
+		switch (_Mode)
+		{
+		case List::sortMode::stu_id:
+			return (_Order == sortOrder::ascending) ? (a.number() < b.number()) : (a.number() > b.number());
+			break;
+		case List::sortMode::name:
+			return (_Order == sortOrder::ascending) ? (a.name() < b.name()) : (a.name() > b.name());
+			break;
+		case List::sortMode::sum:
+			return (_Order == sortOrder::ascending) ? (a.sum() < b.sum()) : (a.sum() > b.sum());
+			break;
+		case List::sortMode::ave:
+			return (_Order == sortOrder::ascending) ? (a.average() < b.average()) : (a.average() > b.average());
+			break;
+		case List::sortMode::math:
+			return (_Order == sortOrder::ascending) ? (a.math_score() < b.math_score()) : (a.math_score() > b.math_score());
+			break;
+		case List::sortMode::english:
+			return (_Order == sortOrder::ascending) ? (a.english_score() < b.english_score()) : (a.english_score() > b.english_score());
+			break;
+		case List::sortMode::computer:
+			return (_Order == sortOrder::ascending) ? (a.computer_score() < b.computer_score()) : (a.computer_score() > b.computer_score());
+			break;
+		case List::sortMode::var:
+			return (_Order == sortOrder::ascending) ? (a.variance() < b.variance()) : (a.variance() > b.variance());
+			break;
+		}
+		});
 }
 
 void List::import_file(const std::string& _Filename){

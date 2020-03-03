@@ -27,18 +27,21 @@ public:
 	template <typename IstreamTy>
 	friend IstreamTy& operator>>(IstreamTy& _Is, Student& _Stu);
 		
-	// get attribute values
-	numTy number()const;
-	const char* name()const;
-	float math_score()const;
-	float english_score()const;
-	float computer_score()const;
-	float sum();
-	float average()const;
-	float variance()const;
+	// get attribute values, implicit inline functions with definitions within class 
+	Student::numTy number()const { return _num; }
+	const char* name()const { return _name; }
+	float math_score()const { return _score[0]; }
+	float english_score()const { return _score[1]; }
+	float computer_score()const { return _score[2]; }
+	float sum()const { return _sum; }
+	float average()const { return _ave; }
+	float variance()const { return _var; }
+
 	float calc_sum()const;
 	float calc_ave()const;
 	float calc_var()const;
+
+	/// auxiliary funtions
 	float _sum_(const float a[], int n)const;
 	float aver(const float a[], int n)const;
 	float vari(const float a[], int n)const;
@@ -78,7 +81,7 @@ public:
 private:
 	void strcpymost(char* _Destination, const char* _Source, size_t _Count);
 	
-	static constexpr int _name_length = 10;	// or need to add an interface to render it variable
+	static constexpr int _name_length = 20;	// or need to add an interface to render it variable
 
 	static iMode _iMode;
 	static oMode _oMode;

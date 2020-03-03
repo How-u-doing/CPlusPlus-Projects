@@ -33,12 +33,15 @@ int main()
 		//Student::set_iMode(Student::iMode::more);
 		ifstream ifs{ "new_data.csv" };
 		ifs >> Student::iMode::more;
+		ifs.close();
 
 		list2.import_file( "new_data.csv");
+		list2.sort();
 		cout << "\n\n\n";
 		list2.print_list();
 
-		ifs.close();
+		list2.save_as("sorted_by_sum.csv", list.begin(), list.end());
+		
 	}
 	catch (exception & e) {
 		cout << e.what();
