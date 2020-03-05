@@ -4,6 +4,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <cstring>
 
 void List::print_atrributes() {
 	printf("Number\t  Name\t\t\t Math\tEnglish\tComputer Sum\tAverage Variance\n");
@@ -58,7 +59,8 @@ void List::modify(Student::numTy _Stu_id, const Student& _Newdata) {
 }
 
 void List::modify(const_iterator& _Where, const Student& _Newdata) {
-	auto it = search(_Where);
+	auto it = search(_Where);	// check _Where is valid in this list (if it points to another
+								// list element, it should have no access to modify it)
 	if (it != end()) {
 		*it = _Newdata;
 	}
@@ -73,7 +75,7 @@ void List::sort(sortMode _Mode, sortOrder _Order) {
 			return (_Order == sortOrder::ascending) ? (a.number() < b.number()) : (a.number() > b.number());
 			break;
 		case List::sortMode::name:
-			return (_Order == sortOrder::ascending) ? (a.name() < b.name()) : (a.name() > b.name());
+			return (_Order == sortOrder::ascending) ? strcmp(a.name(), b.name()) <= 0 : strcmp(a.name(), b.name()) > 0;
 			break;
 		case List::sortMode::sum:
 			return (_Order == sortOrder::ascending) ? (a.sum() < b.sum()) : (a.sum() > b.sum());
