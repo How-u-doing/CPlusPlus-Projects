@@ -1,10 +1,11 @@
-/* Count word program, by K&R C */
+/* Word counting program, by K&R C */
+/* bare-bones version of UNIX program 'wc' */
 #include <stdio.h>
 
-#define IN 0    /* inside a word */
-#define OUT 0   /* outside a word */ 
+#define IN  1    /* inside a word */
+#define OUT 0    /* outside a word */ 
 
-/*  count lines, words, and characters in input */
+/* count lines, words, and characters in input */
 main()
 {
 	int c, nl, nw, nc, state;
@@ -13,14 +14,14 @@ main()
 	nl = nw = nc = 0;
 	while ((c = getchar()) != EOF) {
 		++nc;
-		if (c != '\n')
+		if (c == '\n')
 			++nl;
-		if (c == ' ' || c == '\n' || c = '\t')
+		if (c == ' ' || c == '\n' || c == '\t')
 			state = OUT;
-		else if (state == IN) {
-			state = OUT;
+		else if (state == OUT) {
+			state = IN;
 			++nw;
 		}
 	}
-	printf("%dlines, %dwords %dcharaters", nl, nw, nc);
+	printf("%d %d %d\n", nl, nw, nc);
 }
