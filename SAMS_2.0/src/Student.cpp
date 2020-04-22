@@ -37,7 +37,7 @@ template std::ofstream& operator<<(std::ofstream& _Os, const Student::oMode& _Mo
 template std::ostringstream& operator<<(std::ostringstream& _Os, const Student::oMode& _Mode);
 
 
-Student::Student() :_num(0), _name(""), _sum(0.f), _ave(0.f), _var(0.f) { 
+Student::Student() :_num(0), _name(""), _sum(0.f), _ave(0.f), _var(0.f) {
 	for (int i = 0; i < 3; ++i)
 		_score[i] = 0.f;
 }
@@ -45,7 +45,7 @@ Student::Student() :_num(0), _name(""), _sum(0.f), _ave(0.f), _var(0.f) {
 Student::Student(numTy num, const char* name, std::initializer_list<float> scoreList)
 	: _num{ num }
 {
-	strcpymost(_name, name, _name_length);
+	StrNCpy(_name, name, _name_length);
 	// scoreList examples: {68,72.5,89}, {77,56}, {92}
 	int i = 0;
 	for (auto it = scoreList.begin(); it != scoreList.end() && i < 3; ++it)
@@ -63,7 +63,7 @@ Student::Student(numTy num, const char* name, std::initializer_list<float> score
 Student::Student(numTy num, const char* name, const float score[3])
 	: _num{ num }
 {
-	strcpymost(_name, name, _name_length);
+	StrNCpy(_name, name, _name_length);
 	for (int i = 0; i < 3; ++i)
 		_score[i] = score[i];
 
@@ -72,9 +72,10 @@ Student::Student(numTy num, const char* name, const float score[3])
 	_var = calc_var();
 }
 
-Student::Student(const Student& _Stu) : _num(_Stu._num) {
-	strncpy_s(_name, _Stu._name, _name_length - 1);
-	_name[_name_length - 1] = '\0';
+Student::Student(const Student& _Stu) 
+	: _num(_Stu._num)
+{
+	StrNCpy(_name, _Stu._name, _name_length);
 	for (int i = 0; i < 3; ++i)
 		_score[i] = _Stu._score[i];
 
@@ -103,12 +104,8 @@ IstreamTy& operator>>(IstreamTy& _Is, Student& _Stu) {
 	while (_Is >> ch && ch != ',')
 		s += ch;
 
-	// assign string to char array _Stu._name <-> strcpymost(_Stu._name, s.c_str(), Student::_name_length);
-	int i = 0;
-	for (; i < _Stu._name_length - 1 && s[i]; ++i)
-		_Stu._name[i] = s[i];
-	//while (i < _name_length)	// optional, to assign all rest chars with value '\0'
-	_Stu._name[i++] = '\0';		// may be truncated when s.size() > _name_length
+	// assign string to char array _Stu._name, i.e. 
+	Student::StrNCpy(_Stu._name, s.c_str(), Student::_name_length);	
 
 	_Is >> std::skipws;
 	_Is >> _Stu._score[0];	_Is.ignore(1024, ',');
@@ -200,8 +197,7 @@ Student& Student::parse_assign(const std::string& _csv_Line) {
 
 Student& Student::assign(const Student& _Stu) {
 	_num = _Stu._num;
-	strncpy_s(_name, _Stu._name, _name_length - 1);
-	_name[_name_length - 1] = '\0';
+	StrNCpy(_name, _Stu._name, _name_length);
 	for (int i = 0; i < 3; ++i)
 		_score[i] = _Stu._score[i];
 	_sum = _Stu._sum;
@@ -245,23 +241,23 @@ inline void Student::modify_english(const float _Newenglish) { _score[1] = _Newe
 inline void Student::modify_computer(const float _Newcomputer) { _score[2] = _Newcomputer; _sum = calc_sum(); _ave = calc_ave(); _var = calc_var(); }
 
 void Student::modify_name(const char* _Newname) {// strncpy(_name, _Newname, _name_length - 1); _name[_name_length-1]='\0';
-	strcpymost(_name, _Newname, _name_length);
+	StrNCpy(_name, _Newname, _name_length);
 }
-void Student::strcpymost(char* _Destination, const char* _Source, size_t _Count) {
-	auto srcptr = _Source;
-	auto desptr = _Destination;
-	size_t i = 0;
-	// Note that the parentheses for *desptr++ = *srcptr++ are necessary, as precendence && > =. 
-	// see <https://en.cppreference.com/w/cpp/language/operator_precedence>
-	while ((*desptr++ = *srcptr++) && ++i < _Count);
-	--desptr;
-	if (*desptr) {
-		*desptr++ = '\0';			// reset last char for safety
+void Student::StrNCpy(char* strDest, const char* strSrc, std::size_t len) {
+	for (std::size_t i = 0; i < len; ++i) {
+		strDest[i] = strSrc[i];
+		// early exit 
+		if (strSrc[i] == '\0')
+			return;
+	}
+	if (strDest[len - 1] != '\0') {
+		// reset last char for safety
+		strDest[len - 1] = '\0';
 
-		std::string warnning_msg = "Warnning: copy truncated, as source string \"";
-		warnning_msg += _Source;
-		warnning_msg += "\" length exceeded.";
-		std::cout << warnning_msg << std::endl;
+	//	/*std::string warnning_msg = "Warnning: copy truncated, as source string \"";
+	//	warnning_msg += strSrc;
+	//	warnning_msg += "\" length exceeded.";
+	//	std::cout << warnning_msg << std::endl;*/
 	}
 }
 

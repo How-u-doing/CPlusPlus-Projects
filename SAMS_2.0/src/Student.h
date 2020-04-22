@@ -79,8 +79,9 @@ public:
 	static oMode& get_oMode();
 
 private:
-	void strcpymost(char* _Destination, const char* _Source, size_t _Count);
+	static void StrNCpy(char* strDest, const char* strSrc, std::size_t len);
 	
+	// I dunno somehow in vs2019 _name_length must no less than 6 so taht it can perform std::sort by name
 	static constexpr int _name_length = 20;	// or need to add an interface to render it variable
 
 	static iMode _iMode;
@@ -88,7 +89,7 @@ private:
 
 	// optional (though, but it's safe) to assign data members default values within class
 	numTy _num = { 0 };
-	char _name[_name_length] = { "" };
+	char _name[_name_length] = { };
 	float _score[3] = { 0.0f,0.0f,0.0f };
 	float _sum = { 0.0f };
 	float _ave = { 0.0f };
