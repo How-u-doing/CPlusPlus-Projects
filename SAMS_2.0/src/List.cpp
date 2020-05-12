@@ -1,10 +1,15 @@
-#include "List.h"
 #include <algorithm>
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <cstring>
+
+#include "List.h"
+#define Fast3way_partition	// define quicksort method
+#include "mySort.h"
+
+#define use_mySort
 
 void List::print_atrributes() {
 	printf("Number\t  Name\t\t\t Math\tEnglish\tComputer Sum\tAverage Variance\n");
@@ -68,7 +73,12 @@ void List::modify(const_iterator& _Where, const Student& _Newdata) {
 
 
 void List::sort(sortMode _Mode, sortOrder _Order) {
-	std::sort(begin(), end(), [&_Mode, &_Order](const Student& a, const Student& b) {
+#if defined use_mySort
+	mySortingAlgo::
+#else
+	std::
+#endif // defined use_mySort 
+	sort(begin(), end(), [&_Mode, &_Order](const Student& a, const Student& b) {
 		switch (_Mode)
 		{
 		case List::sortMode::stu_id:
@@ -106,8 +116,12 @@ void List::import_file(const std::string& _Filename){
 		throw std::exception(error_msg.c_str());
 	}
 
-	// skip first line (a line as attributes)
+	// skip first line/header (a line as attributes)
+#if defined _WIN32 || defined _WIN64
 	ifs.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+#else  // on Linux/Unix
+	ifs.ignore(1024, '\n');
+#endif // defined _WIN32 || defined _WIN64
 
 	Student s;
 	while (ifs >> s) {

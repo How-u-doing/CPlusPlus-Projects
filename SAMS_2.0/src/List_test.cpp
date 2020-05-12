@@ -54,6 +54,7 @@ int main()
 		//auto it = list2.search(10170499);
 		//list2.modify(it, Student(10170409, "Chandler Bing", { 96.5,100 ,87 }));
 
+		list2.sort();
 		list2.print_list();
 
 		list2.save_as("sorted_by_sum.csv", list.begin(), list.end());
