@@ -1,15 +1,18 @@
-#include <algorithm>
+#include "List.h"
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <cstring>
 
-#include "List.h"
+#define use_mySort
+
+#if defined use_mySort
 #define Fast3way_partition	// define quicksort method
 #include "mySort.h"
-
-#define use_mySort
+#else
+#include <algorithm>	// using std::sort()
+#endif // defined use_mySort
 
 void List::print_atrributes() {
 	printf("Number\t  Name\t\t\t Math\tEnglish\tComputer Sum\tAverage Variance\n");
