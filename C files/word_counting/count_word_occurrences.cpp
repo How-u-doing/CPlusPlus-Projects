@@ -29,9 +29,7 @@ int main()//count the occurrences of each word on input
 {
 	Assoc values;
 	string buf;
-	//cout << "Please input your text, end with <Ctrl + Z>:\n";
 	while (cin >> buf) ++values[buf];
-	//cout << "\nThe occurrences of each word on input is as follows:\n";
 	for (auto x : values.vec)
 		cout << '{' << x.first << ',' << x.second << "}\n";
 
