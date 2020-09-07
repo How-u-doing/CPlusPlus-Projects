@@ -17,7 +17,7 @@ List_test: List_test.cpp List.o Student.o
 Student.o: Student.cpp Student.h
 	$(CC) $(CFLAGS) -c $<
 
-List.o: List.cpp List.h mySort.h Student.o
+List.o: List.cpp List.h mySort.h
 	$(CC) $(CFLAGS) -c $< 
 
 clean:
