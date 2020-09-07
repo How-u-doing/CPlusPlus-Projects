@@ -1,9 +1,10 @@
 #include "Student.h"
+#include <limits> // std::numeric_limits
 #include <string>
 #include <iostream>
 #include <fstream>
-#include <cassert>
 #include <vector>
+#include <stdexcept>
 
 using namespace std;
 
@@ -12,7 +13,7 @@ void read(vector<Student>& list, const string& filename)
 	ifstream ifs{ filename };
 	if (!ifs) {
 		string error_msg = "Couldn't open " + filename + " for reading.\n";
-		throw exception(error_msg.c_str());
+		throw runtime_error(error_msg);
 	}
 
 	// skip first line (a line as attributes)
@@ -42,7 +43,7 @@ void write(const vector<Student>& list, const string& filename)
 	ofstream ofs{ filename, std::ios_base::app };
 	if (!ofs) {
 		string error_msg = "Couldn't open " + filename + " for writing.\n";
-		throw exception(error_msg.c_str());
+		throw runtime_error(error_msg);
 	}
 
 	ofs << "Student ID" << ',' << "Name" << ',' << "Math" << ',' << "English" \
@@ -96,7 +97,7 @@ int main()
 		
 		read(list2, "new_data.csv");
 	}
-	catch (exception& e) {
+	catch (const exception& e) {
 		cout << e.what();
 	}
 

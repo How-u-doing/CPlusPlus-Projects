@@ -24,7 +24,7 @@ int main()
 		float score[3] = { 90.f, 72.5f, 93.f };
 		list.push_back(Student(10170438, "John A. Smith", score));
 
-		// add student data by initialier_list
+		// add student data by initializer_list
 		list.push_back(Student(10170439, "Joey Trribiani", { 96.5,87.f }));
 
 		list.modify(10170492, Student("10170402, Monica Geller , 93, 81.5, 87"));
@@ -68,5 +68,8 @@ int main()
 		cout << e.what();
 	}
 
+	cout << "\nPress any key to leave...\n";
+	char wait;
+	cin >> noskipws >> wait;
 	return 0;
 }

@@ -3,7 +3,7 @@
  *  https://github.com/How-u-doing/DataStructures/blob/master/Sorting/mySort.h
  */
 #ifndef MYSORT_H
-#define MYSOER_H
+#define MYSORT_H
 #include <functional> // std::less<T>
 #include <utility>	  // std::move
 
@@ -584,16 +584,15 @@ void sort(RandomIt first, RandomIt last, bool (*comp)(
 template<typename RandomIt, typename Compare = std::less<typename std::iterator_traits<RandomIt>::value_type>>
 void partial_sort(RandomIt first, RandomIt middle, RandomIt last, Compare comp = Compare{})
 {
-	using namespace myHeap;
-	make_heap(first, middle, comp);
+	myHeap::make_heap(first, middle, comp);
 	auto k = middle - first;
 	for (auto i = middle; i != last; ++i) {
 		if (comp(*i, *first)) {
 			iter_swap(i, first);
-			sift_down(0, first, k, comp);
+			myHeap::sift_down(0, first, k, comp);
 		}
 	}
-	sort_heap(first, middle, comp);
+	myHeap::sort_heap(first, middle, comp);
 }
 
 // same effect as stl nth_element

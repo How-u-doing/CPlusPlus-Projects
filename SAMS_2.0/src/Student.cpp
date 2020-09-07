@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <cstring>
+#include <stdexcept>
 
 // definition of static data members
 Student::iMode Student::_iMode = Student::iMode::less;
@@ -188,7 +189,7 @@ Student& Student::parse_assign(const std::string& _csv_Line) {
 	std::istringstream iss{ _csv_Line };
 	if (!iss) {
 		std::string error_msg = "Couldn't link to string \"" + _csv_Line + "\" for parsing.\n";
-		throw std::exception(error_msg.c_str());
+		throw std::runtime_error(error_msg);
 	}
 
 	iss >> *this;	// meanwhile implicitly instantiated operator>> for istringstream

@@ -13,10 +13,10 @@ public:
 	void print_list();
 
 	iterator search(Student::numTy _Stu_id);
-	iterator search(const_iterator& _Where);
+	iterator search(iterator& _Where);
 	void remove(Student::numTy _Stu_id);
 	void modify(Student::numTy _Stu_id, const Student& _Newdata);
-	void modify(const_iterator& _Where, const Student& _Newdata);
+	void modify(iterator& _Where, const Student& _Newdata);
 
 	enum class sortMode { stu_id, name, sum, ave, math, english, computer, var };
 	enum class sortOrder {ascending, descending};

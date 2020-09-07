@@ -1,18 +1,19 @@
 #include "List.h"
+#include <limits> //std::numeric_limits
 #include <string>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <cstring>
 
-#define use_mySort
+#define USE_MYSORT
 
-#if defined use_mySort
-#define Fast3way_partition	// define quicksort method
+#if defined USE_MYSORT
+#define FAST3WAY_PARTITION	// define quicksort method
 #include "mySort.h"
 #else
 #include <algorithm>	// using std::sort()
-#endif // defined use_mySort
+#endif // defined USE_MYSORT
 
 void List::print_atrributes() {
 	printf("Number\t  Name\t\t\t Math\tEnglish\tComputer Sum\tAverage Variance\n");
@@ -35,7 +36,7 @@ List::iterator List::search(Student::numTy _Stu_id) {
 		}
 	return it;
 }
-List::iterator List::search(const_iterator& _Where) {
+List::iterator List::search(iterator& _Where) {
 	auto it = begin();
 	for (; it != end(); ++it) {
 		if (it == _Where) {
@@ -66,7 +67,7 @@ void List::modify(Student::numTy _Stu_id, const Student& _Newdata) {
 	
 }
 
-void List::modify(const_iterator& _Where, const Student& _Newdata) {
+void List::modify(iterator& _Where, const Student& _Newdata) {
 	auto it = search(_Where);	// check _Where is valid in this list (if it points to another
 								// list element, it should have no access to modify it)
 	if (it != end()) {
@@ -76,55 +77,42 @@ void List::modify(const_iterator& _Where, const Student& _Newdata) {
 
 
 void List::sort(sortMode _Mode, sortOrder _Order) {
-#if defined use_mySort
+#if defined USE_MYSORT
 	mySortingAlgo::
 #else
 	std::
-#endif // defined use_mySort 
-	sort(begin(), end(), [&_Mode, &_Order](const Student& a, const Student& b) {
-		switch (_Mode)
-		{
+#endif // defined USE_MYSORT 
+		sort(begin(), end(), [&_Mode, &_Order](const Student& a, const Student& b) {
+		switch (_Mode) {
 		case List::sortMode::stu_id:
 			return (_Order == sortOrder::ascending) ? (a.number() < b.number()) : (a.number() > b.number());
-			break;
 		case List::sortMode::name:
 			return (_Order == sortOrder::ascending) ? strcmp(a.name(), b.name()) <= 0 : strcmp(a.name(), b.name()) > 0;
-			break;
 		case List::sortMode::sum:
 			return (_Order == sortOrder::ascending) ? (a.sum() < b.sum()) : (a.sum() > b.sum());
-			break;
 		case List::sortMode::ave:
 			return (_Order == sortOrder::ascending) ? (a.average() < b.average()) : (a.average() > b.average());
-			break;
 		case List::sortMode::math:
 			return (_Order == sortOrder::ascending) ? (a.math_score() < b.math_score()) : (a.math_score() > b.math_score());
-			break;
 		case List::sortMode::english:
 			return (_Order == sortOrder::ascending) ? (a.english_score() < b.english_score()) : (a.english_score() > b.english_score());
-			break;
 		case List::sortMode::computer:
 			return (_Order == sortOrder::ascending) ? (a.computer_score() < b.computer_score()) : (a.computer_score() > b.computer_score());
-			break;
 		case List::sortMode::var:
 			return (_Order == sortOrder::ascending) ? (a.variance() < b.variance()) : (a.variance() > b.variance());
-			break;
 		}
-		});
+			});
 }
 
 void List::import_file(const std::string& _Filename){
 	std::ifstream ifs{ _Filename };
 	if (!ifs) {
 		std::string error_msg = "Couldn't open file " + _Filename + " for reading.\n";
-		throw std::exception(error_msg.c_str());
+		throw std::runtime_error(error_msg);
 	}
 
 	// skip first line/header (a line as attributes)
-#if defined _WIN32 || defined _WIN64
 	ifs.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-#else  // on Linux/Unix
-	ifs.ignore(1024, '\n');
-#endif // defined _WIN32 || defined _WIN64
 
 	Student s;
 	while (ifs >> s) {
@@ -140,7 +128,7 @@ void List::save_as(const std::string& _Filename, const_iterator _From, const_ite
 	std::ofstream ofs{ _Filename, _Mode };
 	if (!ofs) {
 		std::string error_msg = "Couldn't open file " + _Filename + " for writing.\n";
-		throw std::exception(error_msg.c_str());
+		throw std::runtime_error(error_msg);
 	}
 
 	ofs << "Student ID" << ',' << "Name" << ',' << "Math" << ',' << "English" \
